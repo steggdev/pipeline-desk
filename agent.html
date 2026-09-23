@@ -9,35 +9,35 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   /* ═══════════════════════════════════════════════════════════
-     Warp — "moonlit terminal behind amber glass"
-     Warm near-black canvas, terminal surfaces, geometric grotesque.
-     Gold Leaf is syntax-only. Buttons/pills/chips are neutral.
+     Warp — warm light ("daylight through amber glass")
+     Warm cream canvas, ink text, terminal surfaces lifted on cream.
+     Gold Leaf is syntax-only. Buttons/pills/chips are neutral ink.
      Component layer hand-rolled in the shadcn idiom (variants, tokens).
      ═══════════════════════════════════════════════════════════ */
   :root {
-    /* surfaces */
-    --canvas: #121212;
-    --banded: #1e1e1d;
-    --card: #2f2f2f;
-    --control: #383838;
-    --floating: #40403f;
+    /* surfaces — inverted from Warp's dark set, warm undertone kept */
+    --canvas: #faf9f6;   /* warm cream ground */
+    --banded: #f2f0eb;   /* recessed band (footer) */
+    --card: #ffffff;     /* card lifts above cream in light */
+    --control: #eceae4;  /* hover / selected fill */
+    --floating: #ffffff;
 
     /* ink */
-    --text: #faf9f6;
-    --text-2: #868684;
-    --text-3: #b4b4b2;
-    --border: #e3e2e0;
+    --text: #121212;     /* warm ink, not pure black */
+    --text-2: #6f6d66;   /* warm midtone */
+    --text-3: #8a8881;   /* warm tertiary */
+    --border: #e2dfd8;   /* warm hairline */
     --ink-black: #080808;
     --absolute: #000000;
 
-    /* syntax-only accents */
-    --gold: #bd9f65;
-    --cobalt: #6f839f;
+    /* syntax-only accents — darkened for contrast on cream */
+    --gold: #a8863f;
+    --cobalt: #5a7191;
 
     /* functional (kept warm, not neon) */
-    --danger: #c9745f;
-    --ok: #8faf7a;
-    --live: #c9745f;
+    --danger: #b04a33;
+    --ok: #5f7d47;
+    --live: #b04a33;
 
     --radius-sm: 4px;
     --radius-md: 8px;
@@ -65,8 +65,8 @@
     flex-direction: column;
     /* the single signature glow, rationed to the canvas only */
     background-image:
-      radial-gradient(1000px 560px at 84% -14%, rgba(33,126,255,0.06), transparent 62%),
-      radial-gradient(760px 420px at 0% 112%, rgba(189,159,101,0.025), transparent 58%);
+      radial-gradient(1000px 560px at 84% -14%, rgba(168,134,63,0.05), transparent 62%),
+      radial-gradient(760px 420px at 0% 112%, rgba(168,134,63,0.03), transparent 58%);
   }
 
   a { color: var(--text); text-decoration: none; }
@@ -90,7 +90,7 @@
     justify-content: space-between;
     gap: 22px;
     padding-bottom: 18px;
-    border-bottom: 1px solid #2f2f2f;
+    border-bottom: 1px solid var(--border);
   }
   .wordmark { display: flex; align-items: baseline; gap: 12px; }
   .wordmark h1 {
@@ -134,7 +134,7 @@
     gap: 2px;
     padding: 2px;
     background: var(--banded);
-    border: 1px solid #2f2f2f;
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
   }
   .chip {
@@ -149,7 +149,7 @@
     cursor: pointer;
     transition: color .18s, background .18s;
   }
-  .chip:hover { color: var(--text); background: #232322; }
+  .chip:hover { color: var(--text); background: #e8e5de; }
   .chip[aria-pressed="true"] {
     color: var(--canvas);
     background: var(--text);
@@ -182,7 +182,7 @@
     cursor: pointer;
     transition: opacity .18s, transform .18s, background .18s, color .18s;
   }
-  .dispatch:hover { background: #ffffff; border-color: #ffffff; }
+  .dispatch:hover { background: #000000; border-color: #000000; }
   .dispatch:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 2px; }
   .dispatch:disabled { opacity: .38; cursor: default; }
 
@@ -198,7 +198,7 @@
   /* shadcn "card" */
   .panel {
     background: var(--card);
-    border: 1px solid #383838;
+    border: 1px solid var(--border);
     border-radius: var(--radius-md);
     overflow: hidden;
   }
@@ -207,8 +207,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 11px 16px;
-    border-bottom: 1px solid #383838;
-    background: #2b2b2b;
+    border-bottom: 1px solid var(--border);
+    background: #f6f4ef;
   }
   .panel-head .label {
     font-family: var(--font-mono);
@@ -228,7 +228,7 @@
   .card-body { padding: 0; }
   .acct {
     padding: 14px 16px 15px;
-    border-bottom: 1px solid #383838;
+    border-bottom: 1px solid var(--border);
   }
   .acct .name {
     font-family: var(--font-sans);
@@ -249,7 +249,7 @@
     grid-template-columns: 124px 1fr;
     gap: 14px;
     padding: 10px 16px;
-    border-bottom: 1px solid #383838;
+    border-bottom: 1px solid var(--border);
     align-items: baseline;
     transition: background .5s ease;
   }
@@ -288,21 +288,21 @@
     text-transform: uppercase;
     border-radius: 3px;
     padding: 2px 8px;
-    border: 1px solid #4a4a49;
-    color: var(--text-3);
-    background: #363635;
+    border: 1px solid #d8d4cc;
+    color: var(--text-2);
+    background: #f1eee8;
   }
-  .pill-live { border-color: rgba(201,116,95,0.5); color: #d98e7b; }
+  .pill-live { border-color: rgba(201,116,95,0.5); color: var(--danger); }
   .pill-suppressed { border-color: rgba(143,175,122,0.45); color: var(--ok); }
 
   /* claim cards */
   .claim {
     margin: 12px 16px 4px;
     padding: 12px 14px;
-    border: 1px solid #40403f;
-    border-left: 2px solid #4a4a49;
+    border: 1px solid var(--border);
+    border-left: 2px solid #d8d4cc;
     border-radius: var(--radius-sm);
-    background: #292927;
+    background: #f7f5f0;
     transition: border-color .4s, background .4s;
   }
   .claim .clabel {
@@ -380,9 +380,9 @@
     text-transform: uppercase;
     border-radius: 3px;
     padding: 4px 11px;
-    border: 1px solid #4a4a49;
-    color: var(--text-3);
-    background: #363635;
+    border: 1px solid #d8d4cc;
+    color: var(--text-2);
+    background: #f1eee8;
     transition: all .45s;
   }
   .state-pill.dirty { color: var(--danger); border-color: rgba(201,116,95,0.5); background: rgba(201,116,95,0.07); }
@@ -393,8 +393,8 @@
     animation: hold 1.5s ease-out .2s 1;
   }
   @keyframes hold {
-    0% { box-shadow: 0 0 0 0 rgba(250,249,246,0.35); }
-    100% { box-shadow: 0 0 0 14px rgba(250,249,246,0); }
+    0% { box-shadow: 0 0 0 0 rgba(18,18,18,0.22); }
+    100% { box-shadow: 0 0 0 14px rgba(18,18,18,0); }
   }
 
   /* decision — shadcn "button:outline" pair */
@@ -418,15 +418,15 @@
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: all .18s;
-    border: 1px solid #4a4a49;
+    border: 1px solid #d8d4cc;
     background: transparent;
     color: var(--text);
   }
-  .decide button:hover { background: #3a3a39; border-color: #565655; }
+  .decide button:hover { background: #eceae4; border-color: #c9c5bb; }
   .decide button:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 2px; }
   .decide button:disabled { opacity: .4; cursor: default; }
   .decide button.chosen { border-color: var(--text); background: var(--text); color: var(--canvas); }
-  .decide button.chosen.die { border-color: var(--danger); background: rgba(201,116,95,0.12); color: #d98e7b; }
+  .decide button.chosen.die { border-color: var(--danger); background: rgba(201,116,95,0.12); color: var(--danger); }
 
   /* ─────────  agents  ───────── */
   .agents { display: flex; flex-direction: column; background: var(--card); }
@@ -435,7 +435,7 @@
     grid-template-columns: 112px 1fr;
     gap: 14px;
     padding: 12px 16px;
-    border-bottom: 1px solid #383838;
+    border-bottom: 1px solid var(--border);
     opacity: .42;
     transition: opacity .5s, background .5s;
   }
@@ -456,7 +456,7 @@
   .tick {
     width: 6px; height: 6px;
     border-radius: 50%;
-    border: 1px solid #565655;
+    border: 1px solid #c9c5bb;
     flex: none;
   }
   .agent-row.active .tick { border-color: var(--gold); background: var(--gold); animation: pulse 1s infinite; }
@@ -469,7 +469,7 @@
     display: block;
     margin-top: 6px;
     padding: 5px 9px;
-    background: #262624;
+    background: #f1eee8;
     border-radius: 3px;
     font-family: var(--font-mono);
     font-size: 11.5px;
@@ -491,7 +491,7 @@
   /* ─────────  footer  ───────── */
   footer.bot {
     background: var(--banded);
-    border-top: 1px solid #2f2f2f;
+    border-top: 1px solid var(--border);
     padding: 14px 40px 16px;
     display: flex;
     align-items: center;
@@ -506,7 +506,7 @@
   footer.bot .r { display: flex; gap: 18px; align-items: center; }
   .stag {
     color: var(--text-3);
-    border: 1px solid #4a4a49;
+    border: 1px solid #d8d4cc;
     border-radius: 3px;
     padding: 2px 8px;
     font-size: 10px;
@@ -652,7 +652,7 @@
 </div>
 
 <footer class="bot">
-  <span>Personal lab · synthetic records · <span class="stag">staging v0</span> · Khairul Azri</span>
+  <span>Personal lab · synthetic records · <span class="stag">staging v0</span> · Stegg Dev | Khairul Azri</span>
   <span class="r">
     <span>not a CRM product</span>
   </span>
