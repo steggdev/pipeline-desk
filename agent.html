@@ -9,13 +9,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   /* ═══════════════════════════════════════════════════════════
-     Warp — warm light ("daylight through amber glass")
+     Warp, warm light ("daylight through amber glass")
      Warm cream canvas, ink text, terminal surfaces lifted on cream.
      Gold Leaf is syntax-only. Buttons/pills/chips are neutral ink.
      Component layer hand-rolled in the shadcn idiom (variants, tokens).
      ═══════════════════════════════════════════════════════════ */
   :root {
-    /* surfaces — inverted from Warp's dark set, warm undertone kept */
+    /* surfaces: inverted from Warp's dark set, warm undertone kept */
     --canvas: #faf9f6;   /* warm cream ground */
     --banded: #f2f0eb;   /* recessed band (footer) */
     --card: #ffffff;     /* card lifts above cream in light */
@@ -30,7 +30,7 @@
     --ink-black: #080808;
     --absolute: #000000;
 
-    /* syntax-only accents — darkened for contrast on cream */
+    /* syntax-only accents: darkened for contrast on cream */
     --gold: #a8863f;
     --cobalt: #5a7191;
 
@@ -168,7 +168,7 @@
     opacity: .55;
   }
 
-  /* shadcn "button: default" — flat, 4px radius, luminous, no shadow */
+  /* shadcn "button: default": flat, 4px radius, luminous, no shadow */
   .dispatch {
     font-family: var(--font-sans);
     font-weight: 500;
@@ -272,13 +272,13 @@
   .field .v .dim { color: var(--text-2); }
   .field .v .arr { color: var(--text-2); padding: 0 6px; font-family: var(--font-mono); font-size: 11px; }
 
-  /* flash on change — a syntax-gold wash, the one place UI may blush */
+  /* flash on change: a syntax-gold wash, the one place UI may blush */
   .field.flash { background: rgba(189,159,101,0.07); }
 
   .val-unassigned { color: var(--text-2); }
   .val-owner { color: var(--text); }
 
-  /* sequence pills — neutral outline (shadcn "badge:outline") */
+  /* sequence pills: neutral outline (shadcn "badge:outline") */
   .val-suppressed { color: var(--text-3); }
   .pill-live, .pill-suppressed {
     display: inline-block;
@@ -316,7 +316,7 @@
   .claim .ctext { font-size: 14px; line-height: 1.45; letter-spacing: 0.14px; }
   .claim.draft .ctext { color: var(--text); }
 
-  /* blocked — danger is structural here, not syntax */
+  /* blocked: danger is structural here, not syntax */
   .claim.blocked { border-left-color: var(--danger); background: rgba(201,116,95,0.06); }
   .claim.blocked .ctext { color: var(--text-2); }
   .strike { position: relative; white-space: nowrap; }
@@ -347,7 +347,7 @@
   }
   .claim.blocked .strike-tag { opacity: 1; }
 
-  /* held line — this is the thesis; it earns the gold hairline */
+  /* held line: this is the thesis; it earns the gold hairline */
   .claim.held {
     margin-top: 10px;
     border-left-color: var(--gold);
@@ -372,7 +372,7 @@
     text-transform: uppercase;
     color: var(--text-2);
   }
-  /* shadcn "badge" — neutral until held, then luminous */
+  /* shadcn "badge": neutral until held, then luminous */
   .state-pill {
     font-family: var(--font-mono);
     font-size: 11px;
@@ -397,7 +397,7 @@
     100% { box-shadow: 0 0 0 14px rgba(18,18,18,0); }
   }
 
-  /* decision — shadcn "button:outline" pair */
+  /* decision: shadcn "button:outline" pair */
   .decide {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -539,7 +539,7 @@
       <span class="tag">RevOps lab</span>
     </div>
     <p class="thesis">
-      Every run below is <strong>the same run</strong> — scripted, deterministic, no model.
+      Every run below is <strong>the same run</strong>: scripted, deterministic, no model.
       The rules are the interesting part, not the improv. This is what happens
       <em>before</em> the email goes out.
     </p>
@@ -660,7 +660,7 @@
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   Pipeline Desk — deterministic scripted run.
+   Pipeline Desk: deterministic scripted run.
    No API, no network, no model. Same input → same run, always.
    ═══════════════════════════════════════════════════════════════ */
 
@@ -690,7 +690,7 @@ const SCENARIOS = {
         out: "Outbound nurture still live while a renewal is in Proposal and unowned. Suppressing the sequence. Flagging stage as at risk.",
         tool: "suppress(sequence) · flag(stage) → at_risk" },
       { name: "Guardrail",
-        out: "Draft contains a savings promise we cannot stand behind. Striking the claim. Holding the note for a human — nothing sends.",
+        out: "Draft contains a savings promise we cannot stand behind. Striking the claim. Holding the note for a human; nothing sends.",
         tool: "strike(claim) · hold(note) → human_review" }
     ]
   },
@@ -708,19 +708,19 @@ const SCENARIOS = {
     },
     meeting: { start: "<span class='dim'>None</span>", end: "AE calendar hold · 2 days out" },
     draftBanned: "Our platform will <span class='strike' id='banned'>cut your ops spend by half</span>.<span class='strike-tag'>Blocked</span>",
-    held: "You asked for a look at how freight teams like yours get set up — here it is, no pitch.",
+    held: "You asked for a look at how freight teams like yours get set up. Here it is, no pitch.",
     agents: [
       { name: "Scout",
-        out: "Inbound demo request from a 3PL, 44 seats. No prior record. Contact title looks like an intern — likely a placeholder.",
+        out: "Inbound demo request from a 3PL, 44 seats. No prior record. Contact title looks like an intern, likely a placeholder.",
         tool: "enrich(domain) → inbound · title_unverified=true" },
       { name: "Router",
         out: "Routed to AE (Priya). Contact title unverified, so no AE calendar time until it is confirmed. Calendar held, not booked.",
         tool: "route(lead) → owner=AE · calendar=hold" },
       { name: "Hygiene",
-        out: "No sequence existed. Creating a follow-up but leaving it queued — nothing goes out until the title is confirmed.",
+        out: "No sequence existed. Creating a follow-up but leaving it queued; nothing goes out until the title is confirmed.",
         tool: "create(sequence) → queued" },
       { name: "Guardrail",
-        out: "Draft promises half the ops spend gone — unsupportable. Striking it. Holding for a human to confirm who is actually on the call.",
+        out: "Draft promises half the ops spend gone. Unsupportable. Striking it. Holding for a human to confirm who is actually on the call.",
         tool: "strike(claim) · hold(note) → human_review" }
     ]
   },
@@ -738,7 +738,7 @@ const SCENARIOS = {
     },
     meeting: { start: "<span class='dim'>None</span>", end: "Partner sync · 1 working day" },
     draftBanned: "We'll <span class='strike' id='banned'>take this deal direct and loop the partner later</span>.<span class='strike-tag'>Blocked</span>",
-    held: "Flagged to the partner owner first — before either team emails this account.",
+    held: "Flagged to the partner owner first, before either team emails this account.",
     agents: [
       { name: "Scout",
         out: "Existing partner-sourced record for the same domain. Partner owner already active on this account.",
@@ -869,14 +869,14 @@ function run() {
   setPill("Dirty", "dirty");
   $("run-meta").textContent = "Running";
 
-  // Beat 0 — Scout @ 500ms
+  // Beat 0: Scout @ 500ms
   later(() => {
     activate(0);
     setField(fields.fit, s.fit.end, true);
     finish(0, s.agents[0]);
   }, 500);
 
-  // Beat 1 — Router @ 2200ms
+  // Beat 1: Router @ 2200ms
   later(() => {
     activate(1);
     setField(fields.owner, s.owner.end, true);
@@ -884,7 +884,7 @@ function run() {
     setField(fields.stage, s.stage.end, true);
   }, 2200);
 
-  // Beat 2 — Hygiene @ 3900ms
+  // Beat 2: Hygiene @ 3900ms
   later(() => {
     activate(2);
     fields.sequence.innerHTML = s.sequence.end;
@@ -893,13 +893,13 @@ function run() {
     setField(fields.meeting, s.meeting.end, true);
   }, 3900);
 
-  // Beat 3 — the quiet pause before Guardrail @ 5600ms
+  // Beat 3: the quiet pause before Guardrail @ 5600ms
   later(() => {
     $("run-meta").textContent = "…";
     $("foot-left").textContent = "holding";
   }, 5600);
 
-  // Beat 4 — Guardrail @ 6600ms
+  // Beat 4: Guardrail @ 6600ms
   later(() => {
     activate(3);
     claimDraft.classList.add("blocked");
@@ -907,7 +907,7 @@ function run() {
     finish(3, s.agents[3]);
   }, 6600);
 
-  // Beat 5 — held @ 7500ms
+  // Beat 5: held @ 7500ms
   later(() => {
     setPill("Held for human", "held");
     claimHeld.classList.add("show");
@@ -932,7 +932,7 @@ function finish(i, a) {
   out.innerHTML = a.out + '<span class="tool">' + a.tool + '</span>';
 }
 
-/* ── decision (cosmetic only — never sends) ── */
+/* decision (cosmetic only, never sends) */
 decide.addEventListener("click", (e) => {
   const btn = e.target.closest("button");
   if (!btn || decided) return;
@@ -961,7 +961,7 @@ document.querySelectorAll(".chip").forEach(chip => {
 // keyboard: space on dispatch handled natively
 loadScenario("renewal", true);
 
-/* expose for a quick console sanity check — no side effects */
+/* expose for a quick console sanity check, no side effects */
 window.__desk = { SCENARIOS, run: () => run(), load: (k) => loadScenario(k, true) };
 </script>
 </body>
