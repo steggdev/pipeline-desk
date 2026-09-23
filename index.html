@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Khairul Azri · RevOps lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0c0d0b;
+    --panel: #141511;
+    --ink: #eceae2;
+    --mute: #9a978c;
+    --faint: #5f5d54;
+    --line: #262720;
+    --gold: #d4b483;
+    --serif: "Instrument Serif", Georgia, serif;
+    --sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-weight: 300; -webkit-font-smoothing: antialiased; }
+  body {
+    min-height: 100vh; display: flex; flex-direction: column;
+    background-image:
+      radial-gradient(1100px 600px at 82% -12%, rgba(212,180,131,0.055), transparent 60%),
+      radial-gradient(900px 500px at 0% 110%, rgba(212,180,131,0.03), transparent 55%);
+  }
+  a { color: var(--gold); text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  .wrap { width: 100%; max-width: 760px; margin: 0 auto; padding: 64px 40px 0; flex: 1; }
+
+  header .kicker {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--faint); margin-bottom: 20px;
+  }
+  header h1 {
+    font-family: var(--serif); font-weight: 400; font-size: 46px; line-height: 1.08;
+    letter-spacing: 0.2px; max-width: 620px;
+  }
+  header p.lede {
+    margin-top: 20px; font-size: 15px; line-height: 1.6; color: var(--mute); max-width: 560px;
+  }
+
+  .rule { height: 1px; background: var(--line); margin: 44px 0; }
+
+  .entry {
+    display: block; padding: 24px; border: 1px solid var(--line); border-radius: 10px;
+    background: var(--panel); transition: border-color .3s, background .3s;
+  }
+  .entry:hover { border-color: var(--faint); background: #17180f; }
+  .entry .tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gold);
+  }
+  .entry h2 {
+    font-family: var(--serif); font-weight: 400; font-size: 25px; margin-top: 10px; color: var(--ink);
+  }
+  .entry p { margin-top: 8px; font-size: 13.5px; line-height: 1.55; color: var(--mute); max-width: 520px; }
+  .entry .go { margin-top: 16px; font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em; color: var(--gold); }
+  .entry .go::after { content: " →"; }
+
+  .list { margin-top: 8px; }
+  .list .row {
+    display: flex; justify-content: space-between; gap: 20px; padding: 13px 2px;
+    border-bottom: 1px solid var(--line); font-size: 13.5px; color: var(--mute);
+  }
+  .list .row .r { color: var(--ink); font-family: var(--mono); font-size: 11.5px; }
+
+  footer.bot {
+    border-top: 1px solid var(--line); margin-top: 56px;
+    padding: 18px 40px 26px; display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; font-family: var(--mono); font-size: 10.5px;
+    letter-spacing: 0.05em; color: var(--faint);
+  }
+  footer.bot .stag {
+    color: var(--gold); border: 1px solid rgba(212,180,131,0.3); border-radius: 999px;
+    padding: 2px 9px; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 40px 20px 0; }
+    header h1 { font-size: 33px; }
+    footer.bot { padding: 16px 20px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="kicker">RevOps lab · staging</div>
+    <h1>I build the boring middle of revenue systems — routing, hygiene, and the guardrails that stop a bad email.</h1>
+    <p class="lede">
+      Most of this work is invisible: a record gets owned, a sequence gets suppressed,
+      a claim gets struck before it reaches a customer. This page is a small, honest
+      lab where you can watch that machinery run.
+    </p>
+  </header>
+
+  <div class="rule"></div>
+
+  <a class="entry" href="agent.html">
+    <span class="tag">Live demo · deterministic</span>
+    <h2>Watch the agents</h2>
+    <p>
+      One messy CRM record — a renewal, no owner, a live sequence, a draft promising 12%.
+      Four scripted rules run in order: Scout, Router, Hygiene, Guardrail. Nothing sends.
+      Same run every time.
+    </p>
+    <span class="go">Open Pipeline Desk</span>
+  </a>
+
+  <div class="rule"></div>
+
+  <div class="list">
+    <div class="row"><span>What I work on</span><span class="r">routing · hygiene · guardrails</span></div>
+    <div class="row"><span>How this demo is built</span><span class="r">one HTML file · no model · no API</span></div>
+    <div class="row"><span>Where this would live next</span><span class="r">HubSpot / Salesforce rules</span></div>
+  </div>
+
+</div>
+
+<footer class="bot">
+  <span>Personal lab · synthetic records · <span class="stag">staging v0</span> · Khairul Azri</span>
+  <span>not a CRM product</span>
+</footer>
+
+</body>
+</html>
