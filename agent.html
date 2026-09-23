@@ -628,19 +628,19 @@
       </div>
       <div class="agent-row" data-agent="0">
         <div class="agent-name"><span class="tick"></span>Scout</div>
-        <div class="agent-out" id="out-0"><span class="dim">Enrich · open opp · duplicate check</span></div>
+        <div class="agent-out" id="out-0"><span class="dim">Identify the account · check for duplicates</span></div>
       </div>
       <div class="agent-row" data-agent="1">
         <div class="agent-name"><span class="tick"></span>Router</div>
-        <div class="agent-out" id="out-1"><span class="dim">Owner · SLA · territory</span></div>
+        <div class="agent-out" id="out-1"><span class="dim">Assign an owner · set a deadline</span></div>
       </div>
       <div class="agent-row" data-agent="2">
         <div class="agent-name"><span class="tick"></span>Hygiene</div>
-        <div class="agent-out" id="out-2"><span class="dim">Sequence · stale stage</span></div>
+        <div class="agent-out" id="out-2"><span class="dim">Turn off live emails · flag the deal</span></div>
       </div>
       <div class="agent-row" data-agent="3">
         <div class="agent-name"><span class="tick"></span>Guardrail</div>
-        <div class="agent-out" id="out-3"><span class="dim">Draft · claim check · hold</span></div>
+        <div class="agent-out" id="out-3"><span class="dim">Check the draft · block bad claims · hold</span></div>
       </div>
       <div class="log-foot">
         <span id="foot-left">deterministic · 4 rules</span>
@@ -669,29 +669,29 @@ const SCENARIOS = {
     id: "REC-4471",
     account: "Northspin Logistics",
     seats: "120 seats · Logistics · mid-market",
-    fit: { start: "Not scored", end: "81 · strong ICP match" },
+    fit: { start: "Not scored", end: "81 · strong fit" },
     stage: { start: "Proposal", end: "Proposal · <span class='dim'>at risk</span>" },
     owner: { start: "Unassigned", end: "Maya Chen · CS<span class='dim'> + </span>Arun Shah · AE" },
     sequence: {
-      start: "Outbound nurture <span class='pill-live'>Live</span>",
-      end: "Outbound nurture <span class='pill-suppressed'>Suppressed</span>"
+      start: "Automated emails <span class='pill-live'>Live</span>",
+      end: "Automated emails <span class='pill-suppressed'>Off</span>"
     },
     meeting: { start: "<span class='dim'>None</span>", end: "CS task · 4 working hours" },
     draftBanned: "We will save you <span class='strike' id='banned'>12% at renewal</span>.<span class='strike-tag'>Blocked</span>",
-    held: "We will show which work is actually owned before we talk expansion.",
+    held: "We will show you which work is actually owned before we ever talk about expanding.",
     agents: [
       { name: "Scout",
-        out: "Matched to ICP set: 120 seats, freight/logistics. One open renewal opp (11 wks out). No duplicate account.",
-        tool: "enrich(domain) → firmographic match · dupes: 0" },
+        out: "Finds the account, confirms it's a good-fit customer (120 seats, freight), and checks we don't already have a duplicate record. There's a renewal coming up in 11 weeks.",
+        tool: "look up the account · check for a match · no duplicate" },
       { name: "Router",
-        out: "No owner on a renewal inside 90 days. Routing to CS (Maya) with AE backup (Arun). SLA: 4 working hours.",
-        tool: "route(opp) → owner=CS+AE · sla=4h" },
+        out: "The renewal is 11 weeks out and nobody owns it. Assigns it to the support lead (Maya) with the sales rep (Arun) as backup, and sets a rule: respond within 4 working hours.",
+        tool: "assign an owner · set a deadline · 4 hours" },
       { name: "Hygiene",
-        out: "Outbound nurture still live while a renewal is in Proposal and unowned. Suppressing the sequence. Flagging stage as at risk.",
-        tool: "suppress(sequence) · flag(stage) → at_risk" },
+        out: "The automated email sequence is still running, but this deal is now at risk and unowned. Turns the emails off and marks the deal at risk.",
+        tool: "turn the emails off · flag the deal at risk" },
       { name: "Guardrail",
-        out: "Draft contains a savings promise we cannot stand behind. Striking the claim. Holding the note for a human; nothing sends.",
-        tool: "strike(claim) · hold(note) → human_review" }
+        out: "The draft note promises a discount we can't guarantee. Strikes that claim out and holds the note for a human. Nothing gets sent.",
+        tool: "block the false claim · hold for a human · nothing sent" }
     ]
   },
 
@@ -711,17 +711,17 @@ const SCENARIOS = {
     held: "You asked for a look at how freight teams like yours get set up. Here it is, no pitch.",
     agents: [
       { name: "Scout",
-        out: "Inbound demo request from a 3PL, 44 seats. No prior record. Contact title looks like an intern, likely a placeholder.",
-        tool: "enrich(domain) → inbound · title_unverified=true" },
+        out: "Someone filled in a demo request from a small freight company (44 seats). No record existed before. The contact's job title looks like an intern, so it's probably a placeholder.",
+        tool: "look up the company · new record · title unverified" },
       { name: "Router",
-        out: "Routed to AE (Priya). Contact title unverified, so no AE calendar time until it is confirmed. Calendar held, not booked.",
-        tool: "route(lead) → owner=AE · calendar=hold" },
+        out: "Assigns it to a sales rep (Priya). Because the title isn't confirmed, it does not book any calendar time yet. It puts a soft hold on the slot instead.",
+        tool: "assign an owner · hold a calendar slot" },
       { name: "Hygiene",
-        out: "No sequence existed. Creating a follow-up but leaving it queued; nothing goes out until the title is confirmed.",
-        tool: "create(sequence) → queued" },
+        out: "There was no follow-up email set up. Creates one, but leaves it sitting in the queue so nothing goes out until the title is confirmed.",
+        tool: "create a follow-up · leave it queued" },
       { name: "Guardrail",
-        out: "Draft promises half the ops spend gone. Unsupportable. Striking it. Holding for a human to confirm who is actually on the call.",
-        tool: "strike(claim) · hold(note) → human_review" }
+        out: "The draft claims it will cut the customer's costs in half, which we can't prove. Strikes it out and holds the note until a human confirms who's actually on the call.",
+        tool: "block the false claim · hold for a human · nothing sent" }
     ]
   },
 
@@ -729,29 +729,29 @@ const SCENARIOS = {
     id: "REC-4502",
     account: "Meridian Haulage",
     seats: "260 seats · Logistics · partner-sourced",
-    fit: { start: "Not scored", end: "77 · partner overlap" },
+    fit: { start: "Not scored", end: "77 · partner already involved" },
     stage: { start: "Partner", end: "Partner · <span class='dim'>conflict</span>" },
     owner: { start: "Unassigned", end: "Maya Chen · Partner-led" },
     sequence: {
-      start: "Partner outreach <span class='pill-live'>Live</span>",
-      end: "Partner outreach <span class='pill-suppressed'>Suppressed</span>"
+      start: "Partner emails <span class='pill-live'>Live</span>",
+      end: "Partner emails <span class='pill-suppressed'>Off</span>"
     },
     meeting: { start: "<span class='dim'>None</span>", end: "Partner sync · 1 working day" },
     draftBanned: "We'll <span class='strike' id='banned'>take this deal direct and loop the partner later</span>.<span class='strike-tag'>Blocked</span>",
-    held: "Flagged to the partner owner first, before either team emails this account.",
+    held: "Flagged to the partner first, before either team emails this account.",
     agents: [
       { name: "Scout",
-        out: "Existing partner-sourced record for the same domain. Partner owner already active on this account.",
-        tool: "enrich(domain) → partner_attached=true" },
+        out: "Finds an existing record for the same company, already brought in through a partner. The partner's rep is already working this account.",
+        tool: "look up the account · partner already attached" },
       { name: "Router",
-        out: "Territory clash: direct AE footprint overlaps a partner-led account. Routing to partner-led owner only.",
-        tool: "route(opp) → owner=partner_led · clash=true" },
+        out: "Two teams are about to touch the same account. Leaves it with the partner's rep only, so the two don't collide.",
+        tool: "assign to the partner only · avoid a clash" },
       { name: "Hygiene",
-        out: "Both partner and direct sequences are live on the same domain. Suppressing the direct one to avoid a double-email.",
-        tool: "suppress(domain) → direct_off" },
+        out: "Both the partner's emails and our own are switched on for this company. Turns ours off, so the customer doesn't get two emails at once.",
+        tool: "turn our emails off · no double-send" },
       { name: "Guardrail",
-        out: "Draft proposes going around the partner. Striking it. Holding so the partner owner is looped before any contact.",
-        tool: "strike(claim) · hold(note) → human_review" }
+        out: "The draft suggests going around the partner. Strikes that out and holds the note so the partner is looped in before any contact.",
+        tool: "block going around the partner · hold for a human" }
     ]
   }
 };
@@ -774,10 +774,10 @@ let timers = [];
 let decided = false;
 
 const IDLE_HINTS = [
-  "Enrich · open opp · duplicate check",
-  "Owner · SLA · territory",
-  "Sequence · stale stage",
-  "Draft · claim check · hold"
+  "Identify the account · check for duplicates",
+  "Assign an owner · set a deadline",
+  "Turn off live emails · flag the deal",
+  "Check the draft · block bad claims · hold"
 ];
 
 /* ── helpers ── */
