@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pipeline Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0c0d0b;
+    --panel: #141511;
+    --panel-2: #191a15;
+    --ink: #eceae2;
+    --mute: #9a978c;
+    --faint: #5f5d54;
+    --line: #262720;
+    --gold: #d4b483;
+    --danger: #c45c4a;
+    --ok: #8faf7a;
+    --serif: "Instrument Serif", Georgia, serif;
+    --sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-image:
+      radial-gradient(1100px 600px at 82% -12%, rgba(212,180,131,0.055), transparent 60%),
+      radial-gradient(900px 500px at 0% 110%, rgba(212,180,131,0.03), transparent 55%);
+  }
+
+  a { color: var(--gold); text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ─────────  shell  ───────── */
+  .wrap {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px 40px 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─────────  header  ───────── */
+  header.top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .wordmark { display: flex; align-items: baseline; gap: 14px; }
+  .wordmark h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 30px;
+    letter-spacing: 0.2px;
+    line-height: 1;
+  }
+  .wordmark .tag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .thesis {
+    text-align: right;
+    max-width: 430px;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--mute);
+  }
+  .thesis strong { color: var(--ink); font-weight: 500; }
+
+  /* ─────────  controls  ───────── */
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 14px 0 16px;
+    flex-wrap: wrap;
+  }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    letter-spacing: 0.01em;
+    color: var(--mute);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 15px;
+    cursor: pointer;
+    transition: color .25s, border-color .25s, background .25s;
+  }
+  .chip:hover { color: var(--ink); border-color: var(--faint); }
+  .chip[aria-pressed="true"] {
+    color: var(--bg);
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .chip .dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    margin-right: 8px;
+    vertical-align: 1px;
+    opacity: .7;
+  }
+
+  .dispatch {
+    font-family: var(--serif);
+    font-size: 17px;
+    letter-spacing: 0.2px;
+    color: var(--bg);
+    background: var(--gold);
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: transform .18s, filter .18s, opacity .25s;
+  }
+  .dispatch:hover { filter: brightness(1.06); transform: translateY(-1px); }
+  .dispatch:disabled { opacity: .32; cursor: default; transform: none; filter: none; }
+
+  /* ─────────  stage  ───────── */
+  .stage {
+    display: grid;
+    grid-template-columns: 1.02fr 0.98fr;
+    gap: 26px;
+    align-items: start;
+    padding-bottom: 30px;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(255,255,255,0.014), transparent);
+  }
+  .panel-head .label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .panel-head .meta {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--faint);
+  }
+
+  /* ─────────  CRM card  ───────── */
+  .card-body { padding: 6px 0 16px; }
+  .acct {
+    padding: 12px 18px 13px;
+    border-bottom: 1px solid var(--line);
+  }
+  .acct .name {
+    font-family: var(--serif);
+    font-size: 23px;
+    letter-spacing: 0.2px;
+    line-height: 1.15;
+  }
+  .acct .sub {
+    margin-top: 5px;
+    font-size: 12.5px;
+    color: var(--mute);
+  }
+
+  .field {
+    display: grid;
+    grid-template-columns: 132px 1fr;
+    gap: 14px;
+    padding: 9px 18px;
+    border-bottom: 1px solid var(--line);
+    align-items: baseline;
+    transition: background .5s ease;
+  }
+  .field:last-of-type { border-bottom: none; }
+  .field .k {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding-top: 2px;
+  }
+  .field .v {
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--ink);
+    transition: color .4s;
+  }
+  .field .v .dim { color: var(--mute); }
+  .field .v .arr { color: var(--faint); padding: 0 6px; font-family: var(--mono); font-size: 11px; }
+
+  /* flash on change */
+  .field.flash { background: rgba(212,180,131,0.075); }
+  .field.flash .v { color: var(--gold); }
+
+  .val-unassigned { color: var(--mute); }
+  .val-owner { color: var(--ink); }
+  .val-suppressed {
+    color: var(--ok);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.03em;
+  }
+  .pill-live {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--danger);
+    border: 1px solid rgba(196,92,74,0.4);
+    border-radius: 999px;
+    padding: 2px 9px;
+  }
+  .pill-suppressed {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--ok);
+    border: 1px solid rgba(143,175,122,0.4);
+    border-radius: 999px;
+    padding: 2px 9px;
+  }
+
+  /* claim lines */
+  .claim {
+    margin: 11px 18px 4px;
+    padding: 11px 15px;
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--faint);
+    border-radius: 6px;
+    background: rgba(0,0,0,0.18);
+    position: relative;
+    transition: border-color .4s, background .4s;
+  }
+  .claim .clabel {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 8px;
+  }
+  .claim .ctext { font-size: 14px; line-height: 1.5; }
+  .claim.draft .ctext { color: var(--ink); }
+  .claim.blocked { border-left-color: var(--danger); background: rgba(196,92,74,0.05); }
+  .claim.blocked .ctext { color: var(--faint); }
+  .strike { position: relative; white-space: nowrap; }
+  .strike::after {
+    content: "";
+    position: absolute;
+    left: -2px; right: -2px; top: 52%;
+    height: 1.5px;
+    background: var(--danger);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform .55s cubic-bezier(.22,1,.36,1);
+  }
+  .claim.blocked .strike::after { transform: scaleX(1); }
+  .strike-tag {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--danger);
+    border: 1px solid rgba(196,92,74,0.45);
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-left: 8px;
+    vertical-align: 1px;
+    opacity: 0;
+    transition: opacity .4s .25s;
+  }
+  .claim.blocked .strike-tag { opacity: 1; }
+
+  .claim.held {
+    margin-top: 12px;
+    border-left-color: var(--gold);
+    background: rgba(212,180,131,0.05);
+  }
+  .claim.held .clabel { color: var(--gold); }
+  .claim.held .ctext { color: var(--ink); opacity: 0; transition: opacity .5s .1s; }
+  .claim.held.show .ctext { opacity: 1; }
+
+  /* state row */
+  .state-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 12px 18px 4px;
+  }
+  .state-row .k {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .state-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    padding: 5px 13px;
+    border: 1px solid var(--faint);
+    color: var(--mute);
+    transition: all .45s;
+  }
+  .state-pill.dirty { color: var(--danger); border-color: rgba(196,92,74,0.5); }
+  .state-pill.held {
+    color: var(--bg);
+    background: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 0 rgba(212,180,131,0.4);
+    animation: hold 1.5s ease-out .2s 1;
+  }
+  @keyframes hold {
+    0% { box-shadow: 0 0 0 0 rgba(212,180,131,0.45); }
+    100% { box-shadow: 0 0 0 16px rgba(212,180,131,0); }
+  }
+
+  /* decision buttons */
+  .decide {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 12px 18px 14px;
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+    transition: opacity .5s, transform .5s;
+  }
+  .decide.show { opacity: 1; transform: none; pointer-events: auto; }
+  .decide button {
+    font-family: var(--sans);
+    font-size: 13px;
+    letter-spacing: 0.01em;
+    padding: 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .22s;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+  }
+  .decide .approve:hover { border-color: var(--gold); color: var(--gold); }
+  .decide .die:hover { border-color: var(--danger); color: var(--danger); }
+  .decide button:disabled { opacity: .4; cursor: default; }
+  .decide button.chosen { border-color: var(--gold); background: rgba(212,180,131,0.1); color: var(--gold); }
+  .decide button.chosen.die { border-color: var(--danger); background: rgba(196,92,74,0.08); color: var(--danger); }
+
+  /* ─────────  agents  ───────── */
+  .agents { display: flex; flex-direction: column; }
+  .agent-row {
+    display: grid;
+    grid-template-columns: 118px 1fr;
+    gap: 14px;
+    padding: 11px 18px;
+    border-bottom: 1px solid var(--line);
+    opacity: .38;
+    transition: opacity .5s, background .5s;
+  }
+  .agent-row.active { opacity: 1; background: rgba(212,180,131,0.035); }
+  .agent-row.done { opacity: 1; }
+  .agent-name {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--mute);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .agent-row.active .agent-name { color: var(--gold); }
+  .agent-row.done .agent-name { color: var(--ink); }
+  .tick {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    border: 1px solid var(--faint);
+    flex: none;
+  }
+  .agent-row.active .tick { border-color: var(--gold); background: var(--gold); animation: pulse 1s infinite; }
+  .agent-row.done .tick { border-color: var(--ok); background: var(--ok); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  .agent-out { font-size: 13px; line-height: 1.5; color: var(--ink); }
+  .agent-out .tool {
+    display: block;
+    margin-top: 5px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--faint);
+  }
+  .agent-out .tool::before { content: "↳ "; color: var(--gold); opacity: .6; }
+
+  .log-foot {
+    padding: 10px 18px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--faint);
+    letter-spacing: 0.04em;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ─────────  footer  ───────── */
+  footer.bot {
+    border-top: 1px solid var(--line);
+    padding: 13px 40px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    color: var(--faint);
+  }
+  footer.bot .r { display: flex; gap: 18px; align-items: center; }
+  .stag {
+    color: var(--gold);
+    border: 1px solid rgba(212,180,131,0.3);
+    border-radius: 999px;
+    padding: 2px 9px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ─────────  responsive  ───────── */
+  @media (max-width: 880px) {
+    .wrap { padding: 24px 20px 0; }
+    .stage { grid-template-columns: 1fr; }
+    header.top { flex-direction: column; align-items: flex-start; }
+    .thesis { text-align: left; }
+    .controls { align-items: stretch; }
+    .dispatch { width: 100%; }
+    footer.bot { padding: 16px 20px 22px; }
+    .field { grid-template-columns: 108px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="wordmark">
+      <h1>Pipeline&nbsp;Desk</h1>
+      <span class="tag">RevOps lab</span>
+    </div>
+    <p class="thesis">
+      Every run below is <strong>the same run</strong> — scripted, deterministic, no model.
+      The rules are the interesting part, not the improv. This is what happens
+      <em>before</em> the email goes out.
+    </p>
+  </header>
+
+  <div class="controls">
+    <div class="chips" role="group" aria-label="Scenario">
+      <button class="chip" data-scenario="renewal" aria-pressed="true"><span class="dot"></span>Renewal · 11 weeks</button>
+      <button class="chip" data-scenario="inbound" aria-pressed="false"><span class="dot"></span>Inbound demo</button>
+      <button class="chip" data-scenario="partner" aria-pressed="false"><span class="dot"></span>Partner clash</button>
+    </div>
+    <button class="dispatch" id="dispatch">Run the desk</button>
+  </div>
+
+  <main class="stage">
+
+    <!-- ── CRM card ── -->
+    <section class="panel" aria-label="CRM record">
+      <div class="panel-head">
+        <span class="label">Record</span>
+        <span class="meta" id="record-id">REC-4471</span>
+      </div>
+      <div class="card-body" id="card">
+
+        <div class="acct">
+          <div class="name" id="f-account">Northspin Logistics</div>
+          <div class="sub" id="f-seats">120 seats · Logistics · mid-market</div>
+        </div>
+
+        <div class="field" data-field="stage">
+          <span class="k">Stage</span>
+          <span class="v" id="f-stage">Proposal</span>
+        </div>
+        <div class="field" data-field="owner">
+          <span class="k">Owner</span>
+          <span class="v val-unassigned" id="f-owner">Unassigned</span>
+        </div>
+        <div class="field" data-field="sequence">
+          <span class="k">Sequence</span>
+          <span class="v" id="f-sequence">Outbound nurture <span class="pill-live">Live</span></span>
+        </div>
+        <div class="field" data-field="meeting">
+          <span class="k">Next meeting</span>
+          <span class="v" id="f-meeting"><span class="dim">None</span></span>
+        </div>
+        <div class="field" data-field="fit">
+          <span class="k">Fit signal</span>
+          <span class="v" id="f-fit"><span class="dim">Not scored</span></span>
+        </div>
+
+        <!-- draft claim -->
+        <div class="claim draft" id="claim-draft">
+          <div class="clabel">Draft note · proposed</div>
+          <div class="ctext" id="claim-text">
+            We will save you <span class="strike" id="banned">12% at renewal</span>.<span class="strike-tag">Blocked</span>
+          </div>
+        </div>
+
+        <!-- held line -->
+        <div class="claim held" id="claim-held">
+          <div class="clabel">Approved line · held, not sent</div>
+          <div class="ctext" id="held-text">
+            We will show which work is actually owned before we talk expansion.
+          </div>
+        </div>
+
+        <!-- state -->
+        <div class="state-row">
+          <span class="k">State</span>
+          <span class="state-pill dirty" id="pill">Dirty</span>
+        </div>
+
+        <!-- decision -->
+        <div class="decide" id="decide">
+          <button class="approve" data-decision="approve">Approve touch</button>
+          <button class="die" data-decision="die">Let die</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── agents ── -->
+    <section class="panel agents" aria-label="Agent run">
+      <div class="panel-head">
+        <span class="label">Run log</span>
+        <span class="meta" id="run-meta">Idle</span>
+      </div>
+      <div class="agent-row" data-agent="0">
+        <div class="agent-name"><span class="tick"></span>Scout</div>
+        <div class="agent-out" id="out-0"><span class="dim">Enrich · open opp · duplicate check</span></div>
+      </div>
+      <div class="agent-row" data-agent="1">
+        <div class="agent-name"><span class="tick"></span>Router</div>
+        <div class="agent-out" id="out-1"><span class="dim">Owner · SLA · territory</span></div>
+      </div>
+      <div class="agent-row" data-agent="2">
+        <div class="agent-name"><span class="tick"></span>Hygiene</div>
+        <div class="agent-out" id="out-2"><span class="dim">Sequence · stale stage</span></div>
+      </div>
+      <div class="agent-row" data-agent="3">
+        <div class="agent-name"><span class="tick"></span>Guardrail</div>
+        <div class="agent-out" id="out-3"><span class="dim">Draft · claim check · hold</span></div>
+      </div>
+      <div class="log-foot">
+        <span id="foot-left">deterministic · 4 rules</span>
+        <span id="foot-right">no network · no send</span>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="bot">
+  <span>Personal lab · synthetic records · <span class="stag">staging v0</span> · Khairul Azri</span>
+  <span class="r">
+    <span>not a CRM product</span>
+  </span>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   Pipeline Desk — deterministic scripted run.
+   No API, no network, no model. Same input → same run, always.
+   ═══════════════════════════════════════════════════════════════ */
+
+const SCENARIOS = {
+  renewal: {
+    id: "REC-4471",
+    account: "Northspin Logistics",
+    seats: "120 seats · Logistics · mid-market",
+    fit: { start: "Not scored", end: "81 · strong ICP match" },
+    stage: { start: "Proposal", end: "Proposal · <span class='dim'>at risk</span>" },
+    owner: { start: "Unassigned", end: "Maya Chen · CS<span class='dim'> + </span>Arun Shah · AE" },
+    sequence: {
+      start: "Outbound nurture <span class='pill-live'>Live</span>",
+      end: "Outbound nurture <span class='pill-suppressed'>Suppressed</span>"
+    },
+    meeting: { start: "<span class='dim'>None</span>", end: "CS task · 4 working hours" },
+    draftBanned: "We will save you <span class='strike' id='banned'>12% at renewal</span>.<span class='strike-tag'>Blocked</span>",
+    held: "We will show which work is actually owned before we talk expansion.",
+    agents: [
+      { name: "Scout",
+        out: "Matched to ICP set: 120 seats, freight/logistics. One open renewal opp (11 wks out). No duplicate account.",
+        tool: "enrich(domain) → firmographic match · dupes: 0" },
+      { name: "Router",
+        out: "No owner on a renewal inside 90 days. Routing to CS (Maya) with AE backup (Arun). SLA: 4 working hours.",
+        tool: "route(opp) → owner=CS+AE · sla=4h" },
+      { name: "Hygiene",
+        out: "Outbound nurture still live while a renewal is in Proposal and unowned. Suppressing the sequence. Flagging stage as at risk.",
+        tool: "suppress(sequence) · flag(stage) → at_risk" },
+      { name: "Guardrail",
+        out: "Draft contains a savings promise we cannot stand behind. Striking the claim. Holding the note for a human — nothing sends.",
+        tool: "strike(claim) · hold(note) → human_review" }
+    ]
+  },
+
+  inbound: {
+    id: "REC-4488",
+    account: "Kestrel Freight Co.",
+    seats: "44 seats · 3PL · inbound demo request",
+    fit: { start: "Not scored", end: "62 · mixed fit" },
+    stage: { start: "Inbound", end: "Inbound · <span class='dim'>qualified</span>" },
+    owner: { start: "Unassigned", end: "Priya Nair · AE" },
+    sequence: {
+      start: "<span class='dim'>None</span>",
+      end: "Inbound follow-up <span class='pill-suppressed'>Queued</span>"
+    },
+    meeting: { start: "<span class='dim'>None</span>", end: "AE calendar hold · 2 days out" },
+    draftBanned: "Our platform will <span class='strike' id='banned'>cut your ops spend by half</span>.<span class='strike-tag'>Blocked</span>",
+    held: "You asked for a look at how freight teams like yours get set up — here it is, no pitch.",
+    agents: [
+      { name: "Scout",
+        out: "Inbound demo request from a 3PL, 44 seats. No prior record. Contact title looks like an intern — likely a placeholder.",
+        tool: "enrich(domain) → inbound · title_unverified=true" },
+      { name: "Router",
+        out: "Routed to AE (Priya). Contact title unverified, so no AE calendar time until it is confirmed. Calendar held, not booked.",
+        tool: "route(lead) → owner=AE · calendar=hold" },
+      { name: "Hygiene",
+        out: "No sequence existed. Creating a follow-up but leaving it queued — nothing goes out until the title is confirmed.",
+        tool: "create(sequence) → queued" },
+      { name: "Guardrail",
+        out: "Draft promises half the ops spend gone — unsupportable. Striking it. Holding for a human to confirm who is actually on the call.",
+        tool: "strike(claim) · hold(note) → human_review" }
+    ]
+  },
+
+  partner: {
+    id: "REC-4502",
+    account: "Meridian Haulage",
+    seats: "260 seats · Logistics · partner-sourced",
+    fit: { start: "Not scored", end: "77 · partner overlap" },
+    stage: { start: "Partner", end: "Partner · <span class='dim'>conflict</span>" },
+    owner: { start: "Unassigned", end: "Maya Chen · Partner-led" },
+    sequence: {
+      start: "Partner outreach <span class='pill-live'>Live</span>",
+      end: "Partner outreach <span class='pill-suppressed'>Suppressed</span>"
+    },
+    meeting: { start: "<span class='dim'>None</span>", end: "Partner sync · 1 working day" },
+    draftBanned: "We'll <span class='strike' id='banned'>take this deal direct and loop the partner later</span>.<span class='strike-tag'>Blocked</span>",
+    held: "Flagged to the partner owner first — before either team emails this account.",
+    agents: [
+      { name: "Scout",
+        out: "Existing partner-sourced record for the same domain. Partner owner already active on this account.",
+        tool: "enrich(domain) → partner_attached=true" },
+      { name: "Router",
+        out: "Territory clash: direct AE footprint overlaps a partner-led account. Routing to partner-led owner only.",
+        tool: "route(opp) → owner=partner_led · clash=true" },
+      { name: "Hygiene",
+        out: "Both partner and direct sequences are live on the same domain. Suppressing the direct one to avoid a double-email.",
+        tool: "suppress(domain) → direct_off" },
+      { name: "Guardrail",
+        out: "Draft proposes going around the partner. Striking it. Holding so the partner owner is looped before any contact.",
+        tool: "strike(claim) · hold(note) → human_review" }
+    ]
+  }
+};
+
+const $ = (id) => document.getElementById(id);
+const fields = {
+  stage: $("f-stage"), owner: $("f-owner"), sequence: $("f-sequence"),
+  meeting: $("f-meeting"), fit: $("f-fit")
+};
+const agentRows = Array.from(document.querySelectorAll(".agent-row"));
+const decide = $("decide");
+const pill = $("pill");
+const claimDraft = $("claim-draft");
+const claimHeld = $("claim-held");
+const dispatch = $("dispatch");
+
+let current = "renewal";
+let running = false;
+let timers = [];
+let decided = false;
+
+const IDLE_HINTS = [
+  "Enrich · open opp · duplicate check",
+  "Owner · SLA · territory",
+  "Sequence · stale stage",
+  "Draft · claim check · hold"
+];
+
+/* ── helpers ── */
+function clearTimers() { timers.forEach(t => clearTimeout(t)); timers = []; }
+function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+
+function flash(el) {
+  const field = el.closest(".field");
+  if (!field) return;
+  field.classList.add("flash");
+  setTimeout(() => field.classList.remove("flash"), 1100);
+}
+
+function setField(el, html, doFlash) {
+  el.innerHTML = html;
+  el.className = "v" + (el.id === "f-owner" && html.indexOf("Unassigned") > -1 ? " val-unassigned" : "");
+  if (doFlash) flash(el);
+}
+
+function setPill(text, cls) {
+  pill.textContent = text;
+  pill.className = "state-pill " + cls;
+}
+
+/* ── reset to a scenario's START state ── */
+function loadScenario(key, instant) {
+  clearTimers();
+  running = false;
+  decided = false;
+  current = key;
+  const s = SCENARIOS[key];
+
+  document.querySelectorAll(".chip").forEach(c => {
+    c.setAttribute("aria-pressed", String(c.dataset.scenario === key));
+  });
+
+  $("record-id").textContent = s.id;
+  $("f-account").textContent = s.account;
+  $("f-seats").textContent = s.seats;
+
+  setField(fields.stage, s.stage.start, false);
+  setField(fields.owner, s.owner.start, false);
+  fields.sequence.innerHTML = s.sequence.start;
+  setField(fields.meeting, s.meeting.start, false);
+  setField(fields.fit, s.fit.start, false);
+
+  claimDraft.classList.remove("blocked");
+  claimDraft.querySelector(".clabel").textContent = "Draft note · proposed";
+  $("claim-text").innerHTML = s.draftBanned;
+  claimHeld.classList.remove("show");
+  $("held-text").textContent = s.held;
+
+  setPill("Dirty", "dirty");
+  chooseReset();
+
+  agentRows.forEach((row, i) => {
+    row.classList.remove("active", "done");
+    $("out-" + i).innerHTML = '<span class="dim">' + IDLE_HINTS[i] + '</span>';
+  });
+
+  $("run-meta").textContent = "Idle";
+  $("foot-left").textContent = "deterministic · 4 rules";
+  $("foot-right").textContent = "no network · no send";
+  decide.classList.remove("show");
+  dispatch.disabled = false;
+  dispatch.textContent = "Run the desk";
+}
+
+function chooseReset() {
+  decide.querySelectorAll("button").forEach(b => {
+    b.classList.remove("chosen");
+    b.disabled = false;
+  });
+}
+
+/* ── the run ── */
+function run() {
+  if (running) return;
+  running = true;
+  decided = false;
+  dispatch.disabled = true;
+  dispatch.textContent = "Running…";
+  const s = SCENARIOS[current];
+
+  agentRows.forEach(r => r.classList.remove("active", "done"));
+  decide.classList.remove("show");
+  claimHeld.classList.remove("show");
+  claimDraft.classList.remove("blocked");
+  setPill("Dirty", "dirty");
+  $("run-meta").textContent = "Running";
+
+  // Beat 0 — Scout @ 500ms
+  later(() => {
+    activate(0);
+    setField(fields.fit, s.fit.end, true);
+    finish(0, s.agents[0]);
+  }, 500);
+
+  // Beat 1 — Router @ 2200ms
+  later(() => {
+    activate(1);
+    setField(fields.owner, s.owner.end, true);
+    finish(1, s.agents[1]);
+    setField(fields.stage, s.stage.end, true);
+  }, 2200);
+
+  // Beat 2 — Hygiene @ 3900ms
+  later(() => {
+    activate(2);
+    fields.sequence.innerHTML = s.sequence.end;
+    flash(fields.sequence);
+    finish(2, s.agents[2]);
+    setField(fields.meeting, s.meeting.end, true);
+  }, 3900);
+
+  // Beat 3 — the quiet pause before Guardrail @ 5600ms
+  later(() => {
+    $("run-meta").textContent = "…";
+    $("foot-left").textContent = "holding";
+  }, 5600);
+
+  // Beat 4 — Guardrail @ 6600ms
+  later(() => {
+    activate(3);
+    claimDraft.classList.add("blocked");
+    claimDraft.querySelector(".clabel").textContent = "Draft note · blocked";
+    finish(3, s.agents[3]);
+  }, 6600);
+
+  // Beat 5 — held @ 7500ms
+  later(() => {
+    setPill("Held for human", "held");
+    claimHeld.classList.add("show");
+    $("run-meta").textContent = "Held";
+    $("foot-left").textContent = "deterministic · 4 rules";
+    decide.classList.add("show");
+    running = false;
+    dispatch.textContent = "Run again";
+    dispatch.disabled = false;
+  }, 7500);
+}
+
+function activate(i) {
+  agentRows[i].classList.add("active");
+  agentRows[i].classList.remove("done");
+}
+function finish(i, a) {
+  const row = agentRows[i];
+  row.classList.remove("active");
+  row.classList.add("done");
+  const out = $("out-" + i);
+  out.innerHTML = a.out + '<span class="tool">' + a.tool + '</span>';
+}
+
+/* ── decision (cosmetic only — never sends) ── */
+decide.addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
+  if (!btn || decided) return;
+  decided = true;
+  decide.querySelectorAll("button").forEach(b => { b.disabled = true; });
+  btn.classList.add("chosen");
+  if (btn.dataset.decision === "approve") {
+    setPill("Touch approved · held", "held");
+    $("foot-right").textContent = "approved · still not sent";
+  } else {
+    setPill("Closed · no touch", "dirty");
+    $("foot-right").textContent = "closed · nothing sent";
+  }
+});
+
+/* ── wiring ── */
+dispatch.addEventListener("click", run);
+
+document.querySelectorAll(".chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    if (running) return;
+    loadScenario(chip.dataset.scenario, false);
+  });
+});
+
+// keyboard: space on dispatch handled natively
+loadScenario("renewal", true);
+
+/* expose for a quick console sanity check — no side effects */
+window.__desk = { SCENARIOS, run: () => run(), load: (k) => loadScenario(k, true) };
+</script>
+</body>
+</html>
