@@ -592,7 +592,7 @@
 
         <!-- draft claim -->
         <div class="claim draft" id="claim-draft">
-          <div class="clabel">Draft note · proposed</div>
+          <div class="clabel">Draft email · about to send</div>
           <div class="ctext" id="claim-text">
             We will save you <span class="strike" id="banned">12% at renewal</span>.<span class="strike-tag">Blocked</span>
           </div>
@@ -600,7 +600,7 @@
 
         <!-- held line -->
         <div class="claim held" id="claim-held">
-          <div class="clabel">Approved line · held, not sent</div>
+          <div class="clabel">Safer email · held, not sent</div>
           <div class="ctext" id="held-text">
             We will show which work is actually owned before we talk expansion.
           </div>
@@ -690,7 +690,7 @@ const SCENARIOS = {
         out: "The automated email sequence is still running, but this deal is now at risk and unowned. Turns the emails off and marks the deal at risk.",
         tool: "turn the emails off · flag the deal at risk" },
       { name: "Guardrail",
-        out: "The draft note promises a discount we can't guarantee. Strikes that claim out and holds the note for a human. Nothing gets sent.",
+        out: "The draft email promises a discount we can't guarantee. Strikes that claim out and holds it for a human. Nothing gets sent.",
         tool: "block the false claim · hold for a human · nothing sent" }
     ]
   },
@@ -720,7 +720,7 @@ const SCENARIOS = {
         out: "There was no follow-up email set up. Creates one, but leaves it sitting in the queue so nothing goes out until the title is confirmed.",
         tool: "create a follow-up · leave it queued" },
       { name: "Guardrail",
-        out: "The draft claims it will cut the customer's costs in half, which we can't prove. Strikes it out and holds the note until a human confirms who's actually on the call.",
+        out: "The draft email claims it will cut the customer's costs in half, which we can't prove. Strikes it out and holds it until a human confirms who's actually on the call.",
         tool: "block the false claim · hold for a human · nothing sent" }
     ]
   },
@@ -750,7 +750,7 @@ const SCENARIOS = {
         out: "Both the partner's emails and our own are switched on for this company. Turns ours off, so the customer doesn't get two emails at once.",
         tool: "turn our emails off · no double-send" },
       { name: "Guardrail",
-        out: "The draft suggests going around the partner. Strikes that out and holds the note so the partner is looped in before any contact.",
+        out: "The draft email suggests going around the partner. Strikes that out and holds it so the partner is looped in before any contact.",
         tool: "block going around the partner · hold for a human" }
     ]
   }
@@ -825,7 +825,7 @@ function loadScenario(key, instant) {
   setField(fields.fit, s.fit.start, false);
 
   claimDraft.classList.remove("blocked");
-  claimDraft.querySelector(".clabel").textContent = "Draft note · proposed";
+  claimDraft.querySelector(".clabel").textContent = "Draft email · about to send";
   $("claim-text").innerHTML = s.draftBanned;
   claimHeld.classList.remove("show");
   $("held-text").textContent = s.held;
@@ -903,7 +903,7 @@ function run() {
   later(() => {
     activate(3);
     claimDraft.classList.add("blocked");
-    claimDraft.querySelector(".clabel").textContent = "Draft note · blocked";
+    claimDraft.querySelector(".clabel").textContent = "Draft email · blocked";
     finish(3, s.agents[3]);
   }, 6600);
 
