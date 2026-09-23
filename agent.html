@@ -297,8 +297,8 @@
 
   /* claim cards */
   .claim {
-    margin: 12px 16px 4px;
-    padding: 12px 14px;
+    margin: 10px 16px 3px;
+    padding: 10px 14px;
     border: 1px solid var(--border);
     border-left: 2px solid #d8d4cc;
     border-radius: var(--radius-sm);
@@ -363,7 +363,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-    padding: 14px 16px 4px;
+    padding: 11px 16px 3px;
   }
   .state-row .k {
     font-family: var(--font-mono);
@@ -402,7 +402,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    padding: 12px 16px 16px;
+    padding: 10px 16px 10px;
     opacity: 0;
     transform: translateY(6px);
     pointer-events: none;
@@ -428,13 +428,31 @@
   .decide button.chosen { border-color: var(--text); background: var(--text); color: var(--canvas); }
   .decide button.chosen.die { border-color: var(--danger); background: rgba(201,116,95,0.12); color: var(--danger); }
 
+  /* closing line after a decision */
+  .closing {
+    display: none;
+    margin: 0 16px 14px;
+    padding-top: 11px;
+    border-top: 1px solid var(--border);
+  }
+  .closing.show { display: block; animation: closingIn .5s ease both; }
+  @keyframes closingIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .closing-rule {
+    display: block; width: 22px; height: 2px; border-radius: 1px;
+    background: var(--gold); margin-bottom: 10px;
+  }
+  .closing p {
+    font-size: 13.5px; line-height: 1.5; letter-spacing: 0.14px; color: var(--text-2);
+  }
+  .closing p strong { color: var(--text); font-weight: 500; }
+
   /* ─────────  agents  ───────── */
   .agents { display: flex; flex-direction: column; background: var(--card); }
   .agent-row {
     display: grid;
     grid-template-columns: 112px 1fr;
     gap: 14px;
-    padding: 12px 16px;
+    padding: 10px 16px;
     border-bottom: 1px solid var(--border);
     opacity: .42;
     transition: opacity .5s, background .5s;
@@ -616,6 +634,12 @@
         <div class="decide" id="decide">
           <button class="approve" data-decision="approve">Approve touch</button>
           <button class="die" data-decision="die">Let die</button>
+        </div>
+
+        <!-- closing line, revealed after a decision -->
+        <div class="closing" id="closing">
+          <span class="closing-rule"></span>
+          <p id="closing-text"></p>
         </div>
       </div>
     </section>
@@ -842,6 +866,7 @@ function loadScenario(key, instant) {
   $("foot-left").textContent = "deterministic · 4 rules";
   $("foot-right").textContent = "no network · no send";
   decide.classList.remove("show");
+  $("closing").classList.remove("show");
   dispatch.disabled = false;
   dispatch.textContent = "Run the desk";
 }
@@ -864,6 +889,7 @@ function run() {
 
   agentRows.forEach(r => r.classList.remove("active", "done"));
   decide.classList.remove("show");
+  $("closing").classList.remove("show");
   claimHeld.classList.remove("show");
   claimDraft.classList.remove("blocked");
   setPill("Dirty", "dirty");
@@ -939,13 +965,17 @@ decide.addEventListener("click", (e) => {
   decided = true;
   decide.querySelectorAll("button").forEach(b => { b.disabled = true; });
   btn.classList.add("chosen");
+  const closing = $("closing"), closingText = $("closing-text");
   if (btn.dataset.decision === "approve") {
     setPill("Touch approved · held", "held");
     $("foot-right").textContent = "approved · still not sent";
+    closingText.innerHTML = "<strong>Held, not sent.</strong> A human approved the safer email, but this lab never sends anything. Refresh and it resets.";
   } else {
     setPill("Closed · no touch", "dirty");
     $("foot-right").textContent = "closed · nothing sent";
+    closingText.innerHTML = "<strong>Closed, nothing sent.</strong> No email went to the customer and the deal was left alone. Refresh and it resets.";
   }
+  closing.classList.add("show");
 });
 
 /* ── wiring ── */
